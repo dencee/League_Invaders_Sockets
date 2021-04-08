@@ -7,6 +7,7 @@ public class LeagueInvaders {
     protected static final int HEIGHT = 800;
     protected JFrame window;
     public GamePanel gamePanel;
+    public int port = 8443;
 
     public static void main(String[] args) {
         new LeagueInvaders();
@@ -27,13 +28,13 @@ public class LeagueInvaders {
 
         if(result == JOptionPane.YES_OPTION) {
             isServer = true;
-            window.setTitle("League Invaders: Server");
+            window.setTitle("League Invaders: Server (port " + this.port + ")");
         } else {
-            window.setTitle("League Invaders: Client");
+            window.setTitle("League Invaders: Client (port " + this.port + ")");
         }
 
         // Creating a game panel object
-        gamePanel = new GamePanel(isServer);
+        gamePanel = new GamePanel(isServer, this.port);
 
         // Adding gamePanel to the window
         window.add(gamePanel);

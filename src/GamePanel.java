@@ -47,7 +47,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     boolean isServer;
     String initials;
 
-    public GamePanel( boolean isServer ) {
+    public GamePanel( boolean isServer, int port ) {
         titleFont = new Font("Arial", Font.PLAIN, 48);
         enterFont = new Font("Arial", Font.PLAIN, 30);
         spaceFont = new Font("Arial", Font.PLAIN, 30);
@@ -58,6 +58,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             this.initials = this.initials.substring(0, 3);
         }
 
+        this.port = port;
         this.isServer = isServer;
         aliens = new ArrayList<Alien>();
         projectiles = new ArrayList<Projectile>();
@@ -68,7 +69,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         scores = objectManager.getScores();
         servers = new ArrayList<Server>();
         serverSocket = null;
-        port = 8443;
 
         // Calling the image to be in the background
         try {
@@ -89,7 +89,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
         // Running the programs at 60 frames per second (1000 milliseconds = 1 second)
         // Keyword "this" points to the panel itself to be redrawn again
-        frameDraw = new Timer(500 / 60, this);
+        frameDraw = new Timer(1000 / 60, this);
 
         // We start drawing the frame repeatedly
         frameDraw.start();
@@ -385,7 +385,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         
         // spawns a new alien every second and the reference is the objectManager,
         // where the code of the alien will is implemented
-        alienSpawn = new Timer(500, objectManager);
+        alienSpawn = new Timer(500 / this.rocketships.size(), objectManager);
         alienSpawn.start();
     }
 }
