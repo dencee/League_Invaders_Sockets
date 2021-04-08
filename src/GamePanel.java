@@ -335,8 +335,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         }
 
         // Checks keys only if the current state of the game is GAME
-        if (currentState == GAME) {
-
+        if (currentState == GAME && this.rocketships.containsKey(this.myRocketship.name) ) {
+            
             if (key == KeyEvent.VK_UP) {
                 myRocketship.up();
             }

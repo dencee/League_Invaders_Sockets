@@ -1,9 +1,7 @@
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
 import javax.swing.JOptionPane;
 
@@ -74,6 +72,7 @@ public class Server extends Thread {
                     Rocketship existingRocketship = this.gamePanel.rocketships.get(rocketship.name);
                     existingRocketship.x = rocketship.x;
                     existingRocketship.y = rocketship.y;
+                    existingRocketship.isActive = rocketship.isActive;
                 }
             }
         }
@@ -118,10 +117,11 @@ public class Server extends Thread {
     }
 
     public static String getIPAddress() {
-        try {
-            return InetAddress.getLocalHost().getHostAddress();
-        } catch( UnknownHostException e ) {
-            return "ERROR!!!!!";
-        }
+        return "76.167.223.125";
+//        try {
+//            return InetAddress.getLocalHost().getHostAddress();
+//        } catch( UnknownHostException e ) {
+//            return "ERROR!!!!!";
+//        }
     }
 }
