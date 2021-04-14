@@ -15,6 +15,7 @@ public class ObjectManager implements ActionListener {
     protected List<Alien> aliens;
     protected Random random = new Random();
 
+    public static Integer MAX_ALIENS = 30;
     public static Object rocketshipLock = new Object();
     public static Object projectileLock = new Object();
     public static Object alienLock = new Object();
@@ -151,7 +152,9 @@ public class ObjectManager implements ActionListener {
     // New alien appears in the game after one second
     @Override
     public void actionPerformed(ActionEvent e) {
-        addAlien();
+        if( this.aliens.size() < MAX_ALIENS ) {
+            addAlien();
+        }
     }
 
     // Checks collisions between alien and rocket or alien and projectile

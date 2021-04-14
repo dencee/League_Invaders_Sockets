@@ -4,7 +4,6 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -60,12 +59,8 @@ public class Client extends Thread {
         GameData data = this.gson.fromJson(jsonGameData, GameData.class);
 
         if( this.gamePanel.currentState == this.gamePanel.END && data.currentState == this.gamePanel.MENU ) {
-            this.gamePanel.scores.clear();
-            this.gamePanel.aliens.clear();
-            this.gamePanel.projectiles.clear();
-            this.gamePanel.rocketships.clear();
-            this.gamePanel.myRocketship = new Rocketship(this.gamePanel.myRocketship.name, 50 + new Random().nextInt(400), 700);
-            this.gamePanel.rocketships.put( this.gamePanel.myRocketship.name, this.gamePanel.myRocketship );
+            this.gamePanel.resetGameData();
+            this.gamePanel.repaint();
         }
         
         this.gamePanel.currentState = data.currentState;

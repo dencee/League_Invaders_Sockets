@@ -27,6 +27,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     final int MENU = 0;
     final int GAME = 1;
     final int END = 2;
+    final int MAX_SHOTS_PER_INTERVAL = 3;
+    final int MAX_SHOTS_INTERVAL_MS = 300;
+    final int GAME_FPS = 60;
 
     Font titleFont, enterFont, spaceFont, scoreFont;
     BufferedImage bgImage;
@@ -46,6 +49,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     int port;
     boolean isServer;
     String initials;
+    
+    int shotsFired = 0;
+    long projectileFrameTimeStamp = 0;
+    long gameFrames = 0;
 
     public GamePanel( boolean isServer, int port ) {
         titleFont = new Font("Arial", Font.PLAIN, 48);
@@ -89,7 +96,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
         // Running the programs at 60 frames per second (1000 milliseconds = 1 second)
         // Keyword "this" points to the panel itself to be redrawn again
-        frameDraw = new Timer(1000 / 60, this);
+        frameDraw = new Timer(1000 / GAME_FPS, this);
 
         // We start drawing the frame repeatedly
         frameDraw.start();
@@ -270,6 +277,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     // and calls the appropriate method
     @Override
     public void actionPerformed(ActionEvent e) {
+        gameFrames += 1;
+        if( ( (gameFrames - projectileFrameTimeStamp) * 1000 ) / GAME_FPS > MAX_SHOTS_INTERVAL_MS ) {
+            shotsFired = 0;
+        }
+        
         if( isServer ) {
             /*
              * Send game data to server or all clients
@@ -318,13 +330,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             if (currentState == END) {
                 currentState = MENU;
                 alienSpawn.stop();
-                aliens.clear();
-                projectiles.clear();
-                rocketships.clear();
-                myRocketship = new Rocketship(this.initials, 50 + new Random().nextInt(400), 700);
-                rocketships.put( myRocketship.name, myRocketship );
-                objectManager = new ObjectManager(rocketships, projectiles, aliens);
-                scores = objectManager.getScores();
+                resetGameData();
             } else {
                 // Changes the current state to GAME
                 currentState++;
@@ -337,28 +343,33 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         // Checks keys only if the current state of the game is GAME
         if (currentState == GAME && this.rocketships.containsKey(this.myRocketship.name) ) {
             
-            if (key == KeyEvent.VK_UP) {
+            if (key == KeyEvent.VK_UP || key == KeyEvent.VK_W) {
                 myRocketship.up();
             }
 
-            if (key == KeyEvent.VK_DOWN) {
+            if (key == KeyEvent.VK_DOWN || key == KeyEvent.VK_S) {
                 myRocketship.down();
             }
 
-            if (key == KeyEvent.VK_LEFT) {
+            if (key == KeyEvent.VK_LEFT || key == KeyEvent.VK_A) {
                 myRocketship.left();
             }
 
-            if (key == KeyEvent.VK_RIGHT) {
+            if (key == KeyEvent.VK_RIGHT || key == KeyEvent.VK_D) {
                 myRocketship.right();
             }
 
             // A projectile is created when the space bar is pressed
             if( key == KeyEvent.VK_SPACE) {
-                if( this.isServer ) {
-                    projectiles.add(myRocketship.createNewProjectile());
-                } else {
-                    myRocketship.newProjectiles.add(myRocketship.createNewProjectile());
+                if( shotsFired < MAX_SHOTS_PER_INTERVAL) {
+                    if( this.isServer ) {
+                        projectiles.add(myRocketship.createNewProjectile());
+                    } else {
+                        myRocketship.newProjectiles.add(myRocketship.createNewProjectile());
+                    }
+                    
+                    shotsFired += 1;
+                    projectileFrameTimeStamp = gameFrames;
                 }
             }
         }
@@ -387,5 +398,18 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         // where the code of the alien will is implemented
         alienSpawn = new Timer(500 / this.rocketships.size(), objectManager);
         alienSpawn.start();
+    }
+    
+    public void resetGameData() {
+        aliens.clear();
+        projectiles.clear();
+        rocketships.clear();
+        myRocketship = new Rocketship(this.initials, 50 + new Random().nextInt(400), 700);
+        rocketships.put( myRocketship.name, myRocketship );
+        objectManager = new ObjectManager(rocketships, projectiles, aliens);
+        scores = objectManager.getScores();
+        shotsFired = 0;
+        projectileFrameTimeStamp = 0;
+        gameFrames = 0;
     }
 }

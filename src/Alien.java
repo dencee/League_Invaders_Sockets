@@ -20,7 +20,7 @@ public class Alien extends GameObject {
     }
     
     private void setup() {
-        super.speed = 2;
+        super.speed = 4;
         this.speedX = ( new Random().nextBoolean() ) ? 3 * super.speed : 3 * -super.speed;
         this.variant = ( new Random().nextDouble() > 0.8 ) ? true : false;
         loadImage ("alien.png");
